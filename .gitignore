@@ -25,3 +25,7 @@ yarn-error.log*
 #keys
 /src/config/FirebaseDevKeys.js
 /src/config/FirebaseProdKeys.js
+/tools/serviceAccountKey
+
+#data to upload
+/tools/defaultData.json
