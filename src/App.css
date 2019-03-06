@@ -1,26 +1,57 @@
-.App {
-  text-align: center;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+  background: #AFEEEE;
+  /*background-image: linear-gradient(137deg, #D0BAFF 0%, #AD8BF6 27%, #AA88FE 52%, #B77BF6 73%, #D7AAEB 100%);*/
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
+.sticky {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  width: 95%
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.relative{
+  position: relative;
+  top: 95px;
+  width: 95%;
+  z-index: 1;
 }
 
-.App-link {
-  color: #61dafb;
+.FormDiv {
+  border-radius: 25px;
+  background: #D5D8DC;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.collapse {
+  display: none
+}
+
+.collapseOff {
+  display: block
+}
+
+.scroll-container {
+  flex: 1;
+  overflow-y: scroll;
+  height: 80vh;
+}
+
+.scroll-table {
+  flex: 1;
+  overflow-y: scroll;
+  height: 70vh;
 }
 
 @keyframes App-logo-spin {
@@ -29,5 +60,86 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .System {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+
+  .Tablet {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+
+  .Mobile {
+    visibility: visible;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) and (min-width: 426px) {
+  .System {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+
+  .Tablet {
+    visibility: visible;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: block;
+  }
+
+  .Mobile {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .System {
+    visibility: visible;
+    margin: 10px auto 5px 20px;
+    display: block;
+  }
+
+  .Tablet {
+    visibility: visible;
+    margin: 10px auto 5px 20px;
+    display: block;
+  }
+
+  .Mobile {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
   }
 }

@@ -1,0 +1,1 @@
+export const GST_PER = 18;
