@@ -4,6 +4,8 @@ import 'firebase/firebase-firestore';
 import { FirebaseConfig } from './FirebaseConfigKey';
 
 firebase.initializeApp(FirebaseConfig);
-firebase.firestore().settings({ timestampsInSnapshots : true });
+
+export const firestore = firebase.firestore();
+export const firebaseAuth = firebase.auth();
 
 export default firebase;
