@@ -8,12 +8,14 @@ import  { Redirect } from 'react-router-dom';
 import * as productAction from '../../actions/productsAction';
 import * as userAction from '../../actions/userAction';
 import { bindActionCreators } from 'redux';
+import Loading from '../common/Loading';
 
 class DashBoard extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            loading : true,
             openFilter : {brand : false, flavour : false, packSize : false },
             isOpen : false,
             brandFilter : [],
@@ -35,13 +37,14 @@ class DashBoard extends Component {
     
     //Life Cycle methos invoked immediately after mount occurs
     componentDidMount() {
-        const email = JSON.parse(localStorage.getItem('user'));
-        this.props.userActions.fetchUser(email).then (() => {
+        const userId = JSON.parse(localStorage.getItem('user'));
+        this.props.userActions.fetchUser(userId).then (() => {
             return this.props.productActions.fetchProducts();
         }).then(() => {
             this.setState({
                 productList : this.props.products.Products,
-                filterList : this.props.products.FilterList
+                filterList : this.props.products.FilterList,
+                loading: false
             });
         }).catch(err => {
             throw err;
@@ -121,10 +124,11 @@ class DashBoard extends Component {
             openFilter, 
             currentPage, 
             productPerPage,
+            loading
         } = this.state;
 
-        if (! productList.length) {
-            return null;
+        if (loading) {
+            return <Loading/>;
         }
 
         //Logic to filter products

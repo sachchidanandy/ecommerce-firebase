@@ -3,7 +3,7 @@ import initialState from './initialStoreState';
 
 export default function userReducer (state = initialState.user, action) {
     switch (action.type) {
-        case ActionType.LOGIN_USER :
+        case ActionType.FETCH_USER :
             return  action.user;
 
         case ActionType.ADD_TO_CART : 

@@ -63,6 +63,12 @@ html, body {
   }
 }
 
+.loading {
+  position: absolute;
+  top: 35%;
+  left: 43%;
+}
+
 @media screen and (max-width: 425px) {
   .System {
     visibility: hidden;
