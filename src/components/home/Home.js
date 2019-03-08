@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Header from '../common/Header';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,6 +9,7 @@ import RegistrationForm from './Registration';
 import { Input } from 'reactstrap';
 import  { Redirect } from 'react-router-dom';
 import toastr from 'toastr';
+import { firebaseAuth, firestore } from '../../config/FirebaseConfig';
 
 class Home extends Component {
     constructor (props) {
@@ -54,9 +55,9 @@ class Home extends Component {
     onLogin(event) {
         event.preventDefault();
         this.setState({loginInProcess : true});
-        this.props.userActions.loginUser(this.state.user)
-        .then (() => localStorage.setItem('user', JSON.stringify(this.state.user.email)))
-        .then (() => this.props.history.push('/dashboard'))
+        const user = Object.assign({}, this.state.user);
+        firebaseAuth.signInWithEmailAndPassword(user.email, user.password)
+        .then(() => this.props.history.push('/dashboard'))
         .catch(error => {
             toastr.error(error);
             this.setState({
@@ -73,9 +74,16 @@ class Home extends Component {
     onRegister(event) {
         event.preventDefault();
         this.setState({registrationInProcess : true});
-        this.props.userActions.registerUser(this.state.registerUser)
-        .then (() => localStorage.setItem('user', JSON.stringify(this.state.user.email)))
-        .then (() => this.props.history.push('/dashboard'))
+        const user = Object.assign({}, this.state.registerUser);
+        firebaseAuth.createUserWithEmailAndPassword(user.email, user.password)
+        .then( cred => {
+            return firestore.collection('users').doc(cred.user.uid).set({
+                email : user.email,
+                firstName : user.firstName,
+                middleName : user.middleName,
+                lastName : user.lastName
+            });
+        }).then (() => this.props.history.push('/dashboard'))
         .catch(error => {
             toastr.error(error);
             this.setState({

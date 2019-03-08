@@ -4,7 +4,7 @@ import AfterLoginNav from './navbar/AfterLogin';
 
 const Header  = ({ validUser, onFormChange, user, apiCallInProcess, login, toggle, isOpen })  => {
     return (
-        localStorage.hasOwnProperty('user') ? <AfterLoginNav
+        validUser.hasOwnProperty('email') ? <AfterLoginNav
         toggle = {toggle}
         isOpen = {isOpen}
         user  = {validUser}

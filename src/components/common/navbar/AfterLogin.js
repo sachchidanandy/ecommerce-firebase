@@ -8,10 +8,11 @@ import {
     NavItem
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { firebaseAuth } from '../../../config/FirebaseConfig';
 
 const AfterLoginNav = ({toggle, isOpen, user }) => {
     function logOut () {
-        localStorage.removeItem('user');
+        firebaseAuth.signOut();
     }
     return (
         <Navbar light expand='md' style = {{backgroundColor : '#232f3e'}}>
