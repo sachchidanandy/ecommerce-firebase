@@ -10,7 +10,8 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 exports.addCartAndProductCollection = functions.firestore
     .document('users/{userId}')
     .onCreate((snap, context) => {
-        return snap.ref.collection('inCart').add({})
-        .then(() => snap.ref.collection('ordered').add({}))
+        return snap.ref.update({
+            inCart : []
+        }).then(() => snap.ref.collection('ordered').add({}))
         .catch(({message}) => console.log(message));
     });
