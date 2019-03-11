@@ -18,6 +18,7 @@ function buyProductsSuccess(lastOrder) {
     return {type : ActionType.BUY_PRODUCT, lastOrder}
 }
 
+//Fetch User details
 export function fetchUser(userId) {
     return function (dispatch) {
         return firestore.collection('users').doc(`${userId}`).get()

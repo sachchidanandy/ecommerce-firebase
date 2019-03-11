@@ -37,18 +37,20 @@ class DashBoard extends Component {
     
     //Life Cycle methos invoked immediately after mount occurs
     componentDidMount() {
-        const userId = JSON.parse(localStorage.getItem('user'));
-        this.props.userActions.fetchUser(userId).then (() => {
-            return this.props.productActions.fetchProducts();
-        }).then(() => {
-            this.setState({
-                productList : this.props.products.Products,
-                filterList : this.props.products.FilterList,
-                loading: false
+        if (localStorage.hasOwnProperty('user')) {
+            const userId = JSON.parse(localStorage.getItem('user'));
+            this.props.userActions.fetchUser(userId).then (() => {
+                return this.props.productActions.fetchProducts();
+            }).then(() => {
+                this.setState({
+                    productList : this.props.products.Products,
+                    filterList : this.props.products.FilterList,
+                    loading: false
+                });
+            }).catch(err => {
+                throw err;
             });
-        }).catch(err => {
-            throw err;
-        });
+        }
     }
 
     //Handle the toogle during mobile view
@@ -112,6 +114,7 @@ class DashBoard extends Component {
     }
 
     render() { 
+        //To validate if user is loged in.
         if (! localStorage.hasOwnProperty('user')) {
             return <Redirect to='/' />;
         }
