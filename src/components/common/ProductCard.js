@@ -1,10 +1,10 @@
 import React from 'react'; 
 import {Link} from 'react-router-dom';
 
-const ProductCard = ({sku, name, thumbnailURL, price, offerIDs}) => {
+const ProductCard = ({ id, name, thumbnailURL, price, offerIDs}) => {
     return (
         <div className = "card" style={{width: '250px', margin : '8px', height : '275px'}}>
-            <Link to = {`/viewProduct/${sku}`}>
+            <Link to = {`/viewProduct/${id}`}>
                 <img  className= "card-img-top" src={thumbnailURL} alt="Card Pic cap" style={{height: '120px', padding : '8px'}}/>
             </Link>
             <div className="card-body">

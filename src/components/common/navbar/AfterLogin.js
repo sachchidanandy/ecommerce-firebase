@@ -16,7 +16,7 @@ const AfterLoginNav = ({toggle, isOpen, user }) => {
     }
     return (
         <Navbar light expand='md' style = {{backgroundColor : '#232f3e'}}>
-            <NavbarBrand href='/' style={{color :'#00CED1'}}><h2>Your Cart</h2></NavbarBrand>
+            <NavbarBrand href='/dashboard' style={{color :'#00CED1'}}><h2>Your Cart</h2></NavbarBrand>
             <NavbarToggler onClick={toggle} className="mr-2"/>
             <Collapse isOpen={isOpen} navbar>
                 <Nav className="ml-auto" navbar>

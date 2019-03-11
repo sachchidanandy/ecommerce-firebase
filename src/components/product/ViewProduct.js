@@ -5,8 +5,10 @@ import Headers  from '../common/Header';
 import ProductDescription from './ProductDetails';
 import ProductList from '../common/ProductList';
 import { bindActionCreators } from 'redux';
-import * as UserAction from '../../actions/userAction';
+import * as userActions from '../../actions/userAction';
+import * as productAction from '../../actions/productsAction';
 import toastr from 'toastr';
+import Loading from '../common/Loading';
 
 class ViewProduct extends Component {
     constructor(props) {
@@ -14,12 +16,33 @@ class ViewProduct extends Component {
         this.state = { 
             isOpen : false,
             quantity : 1,
-            ApiCallInProgress : false
+            ApiCallInProgress : false,
+            isLoading : true,
+            inCart :[]
         }
         this.changeQuantity = this.changeQuantity.bind(this);
         this.changeQuantityButton = this.changeQuantityButton.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.onToggle = this.onToggle.bind(this);
+    }
+
+    componentDidMount() {
+        if (!this.props.user.hasOwnProperty('email') && localStorage.hasOwnProperty('user')) {
+            const userId = JSON.parse(localStorage.getItem('user'));
+            this.props.userActions.fetchUser(userId).then (() => {
+                return this.props.productActions.fetchProducts();
+            }).then(() => {
+                this.setState({
+                    isLoading : false
+                });  
+            }).catch(error => {
+                toastr.error(error);
+            })
+        } else {
+            this.setState({
+                isLoading : false
+            });
+        }
     }
 
     //Handle the toogle during mobile view
@@ -49,8 +72,8 @@ class ViewProduct extends Component {
     addToCart() {
         this.setState ({ApiCallInProgress : true});
 
-        this.props.UserAction.addToCart(this.props.user.email,
-            {product : this.props.product, quantity : this.state.quantity}
+        this.props.userActions.addToCart(this.props.user.id,
+            {id : this.props.product.id, quantity : this.state.quantity}
         ).then ( () => {
             toastr.success('Product Added To Cart');
             this.setState({quantity : 1, ApiCallInProgress : false});
@@ -61,12 +84,17 @@ class ViewProduct extends Component {
     }
 
     render() { 
-        if (!this.props.user.hasOwnProperty('email')) {
+        //To validate if user is loged in.
+        if (! localStorage.hasOwnProperty('user')) {
             return <Redirect to='/' />;
         }
-        
+
         const {user, product, similarProducts} = this.props;
-        const {isOpen, quantity, ApiCallInProgress} = this.state;
+        const {isOpen, quantity, ApiCallInProgress, isLoading} = this.state;
+
+        if (isLoading) {
+            return <Loading/>;
+        }
         return (
             <div className = 'container-fluid'>
                 <div className = 'container-fluid sticky'>
@@ -101,8 +129,8 @@ class ViewProduct extends Component {
 }
 
 //Fetch the selected product
-function getProductBySku (products, selectedProductSku) {
-    const product = products.filter( product => product.sku === selectedProductSku);
+function getProductBySku (products, selectedProductId) {
+    const product = products.filter( product => product.id === selectedProductId);
     return product[0];
 }
 
@@ -114,13 +142,13 @@ function getSimilarProduct (products, brand) {
 
 //pass state to props
 function mapStateToProps(state, ownProps) {
-    const selectedProductSku = ownProps.match.params.id;
+    const selectedProductId = ownProps.match.params.id;
     const products = state.products.Products;
     let product = {};
     let similarProducts = [];
 
-    if (selectedProductSku && state.products.hasOwnProperty('Products')) {
-        product = getProductBySku(products, selectedProductSku);
+    if (selectedProductId && state.products.hasOwnProperty('Products')) {
+        product = getProductBySku(products, selectedProductId);
         similarProducts = getSimilarProduct(products, product.brand);
     }
 
@@ -133,7 +161,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapActionsToProps (dispatch) {
     return {
-        UserAction : bindActionCreators(UserAction, dispatch)
+        userActions : bindActionCreators(userActions, dispatch),
+        productActions : bindActionCreators(productAction, dispatch)
     };
 }
 

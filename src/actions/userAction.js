@@ -1,12 +1,13 @@
 import * as ActionType from '../constants/ActionType';
 import UserAPI from '../demoAPI/userAPI';
-import { firestore } from '../config/FirebaseConfig';
+import firebase, { firestore } from '../config/FirebaseConfig';
+
 
 function fetchUserSuccess (user) {
     return {type : ActionType.FETCH_USER, user}
 }
 
-function addToCardSuccess(cart) {
+function addToCartSuccess(cart) {
     return {type : ActionType.ADD_TO_CART, cart}
 }
 
@@ -23,7 +24,7 @@ export function fetchUser(userId) {
     return function (dispatch) {
         return firestore.collection('users').doc(`${userId}`).get()
         .then (doc => {
-            return doc.data();
+            return Object.assign({},doc.data(),{id : userId});
         }).then( user => {
             dispatch(fetchUserSuccess(user));
         }).catch ((error) => {
@@ -32,15 +33,23 @@ export function fetchUser(userId) {
     }
 }
 
-// export function addToCart(userID, product) {
-//     return function (dispatch) {
-//         return UserAPI.addToCart(userID, product).then (cart => {
-//             dispatch(addToCardSuccess(cart));
-//         }).catch((error) => {
-//             throw error;
-//         });
-//     };
-// }
+export function addToCart(userId, product) {
+    return function (dispatch) {
+        return firestore.collection('users').doc(`${userId}`).update({
+            inCart : firebase.firestore.FieldValue.arrayUnion({
+                product : firestore.doc(`products/${product.id}`),
+                quantity : product.quantity
+            })
+        }).then (() => {
+            dispatch(addToCartSuccess({
+                product :  product.id,
+                quantity : product.quantity
+            }));
+        }).catch((error) => {
+            throw error;
+        });
+    };
+}
 
 // export function deleteFromCart (userID, productSku) {
 //     return function (dispatch) {

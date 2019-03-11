@@ -37,7 +37,7 @@ class DashBoard extends Component {
     
     //Life Cycle methos invoked immediately after mount occurs
     componentDidMount() {
-        if (localStorage.hasOwnProperty('user')) {
+        if (!this.props.user.hasOwnProperty('email') && localStorage.hasOwnProperty('user')) {
             const userId = JSON.parse(localStorage.getItem('user'));
             this.props.userActions.fetchUser(userId).then (() => {
                 return this.props.productActions.fetchProducts();
@@ -49,6 +49,12 @@ class DashBoard extends Component {
                 });
             }).catch(err => {
                 throw err;
+            });
+        } else {
+            this.setState({
+                productList : this.props.products.Products,
+                filterList : this.props.products.FilterList,
+                loading: false
             });
         }
     }

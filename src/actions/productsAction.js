@@ -18,7 +18,7 @@ export function fetchProducts () {
         return firestore.collection('products').get()
         .then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                ProductData.Products.push(doc.data());
+                ProductData.Products.push(Object.assign({},doc.data(),{id : doc.id}));
             });
         }).then(() => firestore.collection('brands').get())
         .then(querySnapshot => {
@@ -35,7 +35,6 @@ export function fetchProducts () {
             querySnapshot.forEach(doc => {
                 ProductData.FilterList.packSize.push(doc.data());
             });
-            console.log(ProductData);
         }).then(() => dispatch(fetchProductSuccess(ProductData)))
         .catch(err => { throw err});
     };

@@ -9,7 +9,7 @@ import {
 } from 'reactstrap';
 import InputField from '../InputField';
 
-const BeforeLoginNav = ({ validUser, onFormChange, user, apiCallInProcess, login}) => {
+const BeforeLoginNav = ({ onFormChange, user, apiCallInProcess, login}) => {
     return (
         <Navbar expand='md' style = {{backgroundColor : '#D5D8DC'}}>
             <NavbarBrand href='/' style={{color :'#00CED1'}}><h2>Your Cart</h2></NavbarBrand>

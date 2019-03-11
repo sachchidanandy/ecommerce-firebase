@@ -12,12 +12,14 @@ const CollapsePannel = ({filterName, filterOptions, onChangeFilter, nameToShow, 
                 </h4>
             </div>
             <div className = {'card-body collapse' + (openFilter[filterName] ? 'Off' : '')}>
-                {filterOptions.map(data => <CheckBox 
-                    key = {data.name}
-                    value = {data.name}
-                    onChange = {onChangeFilter}
-                    filterName = {filterName}
-                />)}
+                { 
+                    filterOptions.map(data => <CheckBox
+                        key = {data.name}
+                        value = {data.name}
+                        onChange = {onChangeFilter}
+                        filterName = {filterName}/>
+                    )
+                }
             </div>
         </div>
     );
