@@ -5,9 +5,11 @@ import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import * as userAction from '../../actions/userAction';
+import * as cartAction from '../../actions/cartAction';
 import toastr from 'toastr';
 import {GST_PER} from '../../constants/AppConstants';
 import TotalCost from './TotalCost';
+import Loading from '../common/Loading';
 
 class Cart extends Component {
     constructor (props) {
@@ -15,7 +17,8 @@ class Cart extends Component {
         this.state = { 
             isOpen : false,
             ApiCallInProgress : false,
-            cartItems : this.props.user.inCart
+            isLoading : true,
+            cartItems : []
         };
 
         this.onQuantityChange = this.onQuantityChange.bind(this);
@@ -24,6 +27,33 @@ class Cart extends Component {
         this.getTotalItems = this.getTotalItems.bind(this);
         this.getTax = this.getTax.bind(this);
         this.buyProducts = this.buyProducts.bind(this);
+    }
+
+    //Life Cycle methos invoked immediately first render.
+    componentDidMount() {
+        if (!this.props.user.hasOwnProperty('email') && localStorage.hasOwnProperty('user')) {
+            const userId = JSON.parse(localStorage.getItem('user'));
+            this.props.userAction.fetchUser(userId).then (() => {
+                return this.props.cartAction.fetchCartProducts(this.props.user.inCart);
+            }).then(() => {
+                this.setState({
+                    isLoading : false,
+                    cartItems : this.props.cart
+                });  
+            }).catch(error => {
+                toastr.error(error);
+            });
+        } else {
+            this.props.cartAction.fetchCartProducts(this.props.user.inCart)
+            .then(() => {
+                this.setState({
+                    isLoading : false,
+                    cartItems : this.props.cart
+                });  
+            }).catch(error => {
+                toastr.error(error);
+            });
+        }
     }
 
     //Handle the toogle during mobile view
@@ -35,8 +65,8 @@ class Cart extends Component {
     
     //Life Cycle methos invoked immediately after updating occurs
     componentDidUpdate(prevProps) {
-        if (this.props.user.inCart.length !== prevProps.user.inCart.length) {
-            this.setState({cartItems : this.props.user.inCart});
+        if (this.props.cart.length !== prevProps.cart.length) {
+            this.setState({cartItems : this.props.cart});
         }
     }
 
@@ -81,15 +111,21 @@ class Cart extends Component {
     }
 
     render() {
-        if (!this.props.user.hasOwnProperty('email')) {
-            return <Redirect to = '/'/>;
+        //To validate if user is loged in.
+        if (! localStorage.hasOwnProperty('user')) {
+            return <Redirect to='/' />;
         }
 
         const {user} = this.props;
-        const {cartItems} = this.state;
+        const {cartItems, isLoading} = this.state;
         const subTotal = Number(this.getSubTotal(cartItems));
         const totalItems = Number(this.getTotalItems(cartItems));
         const tax = Number(this.getTax(subTotal));
+
+        if (isLoading) {
+            return <Loading/>;
+        }
+
         return (
             <div className = 'container-fluid'>
                 <div className = 'container-fluid sticky'>
@@ -101,8 +137,8 @@ class Cart extends Component {
                 </div>
                 <div className = 'container-fluid relative'>
                     <h3 style = {{color : '#a73a00'}}>Shopping Cart</h3>
-                    {cartItems.length <= 0 ? <Link to = '/dashboard'><h4>Shop Now!!</h4></Link> 
-                    :<div className = 'row'> 
+                    {cartItems.length ?  
+                    <div className = 'row'> 
                         <div className = 'scroll-container col-9'>
                             { cartItems.map(
                                 item => <ProductSummary key = {item.product.sku} onQuantityChange = {this.onQuantityChange} {...item.product} deleteItems = {this.deleteItems}quantity = {item.quantity}/>
@@ -111,7 +147,7 @@ class Cart extends Component {
                         <div className = 'col-3'>
                             <TotalCost totalItems = {totalItems} subTotal = {subTotal} GST_PER = {GST_PER} tax = {tax} buyNow = {this.buyProducts}/>
                         </div>
-                    </div>
+                    </div> : <Link to = '/dashboard'><h4>Shop Now!!</h4></Link>
                     }
                 </div>
             </div>
@@ -121,13 +157,15 @@ class Cart extends Component {
  
 function addStateToProps (state) {
     return {
-        user : state.user
+        user : state.user,
+        cart : state.cart
     };
 }
 
 function addActionsToProps (dispatch) {
     return {
-        userAction : bindActionCreators(userAction, dispatch)
+        userAction : bindActionCreators(userAction, dispatch),
+        cartAction : bindActionCreators(cartAction, dispatch)
     };
 }
 

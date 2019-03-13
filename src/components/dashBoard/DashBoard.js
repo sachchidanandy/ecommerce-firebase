@@ -50,6 +50,16 @@ class DashBoard extends Component {
             }).catch(err => {
                 throw err;
             });
+        } else if (typeof(this.props.products.Products) === 'undefined') {
+            this.props.productActions.fetchProducts().then(() => {
+                this.setState({
+                    productList : this.props.products.Products,
+                    filterList : this.props.products.FilterList,
+                    loading: false
+                });
+            }).catch(err => {
+                throw err;
+            });
         } else {
             this.setState({
                 productList : this.props.products.Products,
